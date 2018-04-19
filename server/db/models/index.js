@@ -1,13 +1,13 @@
-const db = require('../index');
-const Day = require('./Day');
-const Month = require('./Month');
+// const db = require('../index');
+// const day = require('./day');
+// const month = require('./month');
 
 
-Day.belongsTo(Month);
-Month.hasMany(Day);
+// day.belongsTo(month);
+// month.hasMany(day);
 
-module.exports = {
-    db,
-    Day,
-    Month
-};
+// module.exports = {
+//     db,
+//     day,
+//     month
+// };
