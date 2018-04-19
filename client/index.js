@@ -12,12 +12,6 @@ export default RootNavigator = StackNavigator({
   Control: {
     screen: Control,
   },
-  Search: {
-    screen: Search,
-  },
-  Schedule: {
-    screen: Schedule,
-  },
   Navi: {
     screen: Navi,
   }
