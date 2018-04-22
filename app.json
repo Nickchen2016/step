@@ -1,6 +1,7 @@
 {
   "expo": {
-    "sdkVersion": "26.0.0"
+    "sdkVersion": "26.0.0",
+    "orientation": "portrait"
   },
   "infoPlist":{
     "NSLocationWhenInUseUsageDescription":"This app uses user location to setup the starting point to destination"

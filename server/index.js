@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 
 const models = require('./db');
 const Day = models.Day;
-const Month = models.Month;
+const Week = models.Week;
 
 app.use(volleyball);
 
@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 // app.use(express.static(path.join(__dirname, '..', 'public')));
  Day.sync({ force: false })
   .then(function(){
-    return Month.sync({ force: false });
+    return Week.sync({ force: false });
   })
   .then(function(){
     app.listen(port, () => console.log(`Listening on port ${port}`));

@@ -1,10 +1,10 @@
 const apiRouter = require('express').Router();
 const db = require('../db');
 const Day = db.Day;
-const Month = db.Month;
+const Week = db.Week;
 
 apiRouter.get('/',(req,res,next)=>{
-    Month.findAll({
+    Week.findAll({
        include:[{model:Day}]
     })
     .then((result)=>{

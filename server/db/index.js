@@ -8,6 +8,13 @@ console.log(chalk.yellow('Opening dataBase now'));
 const db = new Sequelize(`postgres://localhost:5432/${pkg.name}`);
 
 const Day = db.define('day',{
+        weekName:{
+            type: Sequelize.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        },
         steps:{
             type:Sequelize.STRING,
             allowNull: false,
@@ -24,14 +31,7 @@ const Day = db.define('day',{
         }
     })
 
-const Month = db.define('month',{
-        monthName:{
-            type: Sequelize.STRING,
-            allowNull: false,
-            validate: {
-                notEmpty: true
-            }
-        },
+const Week = db.define('week',{
         totalSteps:{
             type: Sequelize.STRING,
             allowNull: false,
@@ -48,10 +48,10 @@ const Month = db.define('month',{
         }
     });
 
-    Day.belongsTo(Month);
-    Month.hasMany(Day);
+    Day.belongsTo(Week);
+    Week.hasMany(Day);
 
     module.exports = {
         Day,
-        Month
+        Week
     }
