@@ -6,6 +6,7 @@ import Control from './Control';
 
 export default class Map extends Component {
   state = {
+    date:'',
     isPedometerAvailable: 'checking',
     pastStepCount: 0,
     currentStepCount: 0,
@@ -94,6 +95,10 @@ export default class Map extends Component {
     );
 
     const end = new Date();
+    // Get current date next to milemeter
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const date = months[end.getMonth()]+'/'+end.getDate();
+    this.setState({date});
     const start = new Date();
     start.setDate(end.getDate() - 1);
     Pedometer.getStepCountAsync(start, end).then(
@@ -149,12 +154,28 @@ export default class Map extends Component {
             Steps taken in the last 24 hours: {this.state.pastStepCount}
           </Text>
           <Text>Walk! And watch this go up: {this.state.currentStepCount}</Text> */}
-          <View style={{height:'30%',width:'100%'}}>
-              <View style={{height:'50%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
-                <View style={{height:'100%',width:'60%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:80,color:'#3300FF',textAlign:'right'}]}>{this.state.currentStepCount}</Text></View>
-                <View style={{height:'100%',width:'40%',flexDirection:'row'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:30,color:'#3300FF',marginTop:'20%'}]}>Steps</Text><Image source={require('../../public/walk.jpg')}/></View>
+          <View style={{height:'48%',width:'100%',marginTop:'-3%'}}>
+              <View style={{height:'31%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
+                <View style={{height:'100%',width:'58%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:80,color:'#3300FF',textAlign:'right'}]}>{this.state.currentStepCount}</Text></View>
+                <View style={{height:'100%',width:'18%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'50%',textAlign:'center'}]}>Steps</Text></View>
+                <View style={{height:'100%',width:'24%'}}><Image style={{marginTop:'-15%'}} source={require('../../public/walk.jpg')}/></View>
               </View>
-              <View style={{height:'50%',width:'90%',marginLeft: 'auto',marginRight: 'auto'}}></View>
+              <View style={{height:'31%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
+                <View style={{height:'100%',width:'31%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:80,color:'#3300FF',textAlign:'right'}]}>{this.state.currentStepCount/2000}</Text></View>
+                <View style={{height:'100%',width:'19%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'50%',textAlign:'center'}]}>Miles</Text></View>
+                <View style={{height:'100%',width:'50%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:50,color:'#E6E7E8',textAlign:'right',marginTop:'13%'}]}>{this.state.date}</Text></View>
+              </View>
+              <View style={{height:'26%',width:'95%',marginLeft: 'auto',marginRight: 'auto',marginTop:'7%'}}>
+                <View style={{flexDirection:'row',height:'40%',width:'100%'}}>
+                    <View style={{height:'100%',width:'50%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:20,color:'#BCBEC0',textAlign:'center'}]}>Weekly Steps</Text></View>
+                    <View style={{height:'100%',width:'50%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:20,color:'#BCBEC0',textAlign:'center'}]}>Weekly Miles</Text></View>
+                </View>
+                <View style={{height:'1%',width:'100%',backgroundColor:'#E6E7E8'}}></View>
+                <View style={{flexDirection:'row',height:'59%',width:'100%'}}>
+                  <View style={{height:'100%',width:'50%'}}></View>
+                  <View style={{height:'100%',width:'50%'}}></View>
+                </View>
+              </View>
           </View>
             
         
@@ -172,7 +193,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     // flex: 1,
-    marginTop: '-16%',
+    marginTop: '-15%',
     height: '8%',
     width: '100%', 
     alignItems: 'center',

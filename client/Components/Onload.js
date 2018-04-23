@@ -37,7 +37,7 @@ export default class Onload extends Component {
             // () => this.props.navigation.navigate('Maping', this.props.navigation.state.params)
             navigate('Maping',{screen: Maping});
             console.log('hello!!')
-        },0)
+        },1000)
     }
 
 
