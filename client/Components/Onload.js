@@ -3,6 +3,9 @@ import { StyleSheet, View, Text, StatusBar } from 'react-native';
 import { Font } from 'expo';
 import { StackNavigator } from 'react-navigation';
 import { Maping } from './Maping';
+import store from '../store';
+import {Provider} from 'react-redux';
+
 
 export default class Onload extends Component {
     
@@ -31,12 +34,11 @@ export default class Onload extends Component {
     }
 
     componentWillMount(){
-        const { navigate } = this.props.navigation;
+        const { navigate } = this.props.navigation
         setTimeout(function(){
-            console.log(navigate('Maping'))
             // () => this.props.navigation.navigate('Maping', this.props.navigation.state.params)
             navigate('Maping',{screen: Maping});
-            console.log('hello!!')
+            // console.log('hello!!')
         },1000)
     }
 
@@ -44,11 +46,15 @@ export default class Onload extends Component {
     render (){
         const { isFontLoaded1, isFontLoaded2 } = this.state;
         return (
+            <Provider store = {store}>
             <View style={styles.container}>
                 <StatusBar hidden={ true }/>
-                <Text style={[styles.font1,isFontLoaded1 && {fontFamily: 'AvenirNextHeavyItalic'}]}>Steps.</Text>
+                <Text style={[styles.font1,isFontLoaded1 && {fontFamily: 'AvenirNextHeavyItalic'}]}
+                    // onPress={() => this.props.navigation.navigate('Maping', this.props.navigation.state.params)}
+                >Steps.</Text>
                 <Text style={[styles.font2, isFontLoaded2 && {fontFamily: 'AvenirNextULtltalic'}]}>Steps out of your comfort zoom</Text>
             </View>
+            </Provider>
         )
     }
 }

@@ -2,30 +2,41 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, StatusBar, Image } from 'react-native';
 import { Constants, MapView, Location,Permissions,LinearGradient,Pedometer,Font  } from 'expo';
 import Control from './Control';
+import { connect } from 'react-redux';
+import store, { fetchDay } from '../store';
 
 
-export default class Map extends Component {
-  state = {
-    date:'',
-    isPedometerAvailable: 'checking',
-    pastStepCount: 0,
-    currentStepCount: 0,
-    isFontLoaded1: false,
-    isFontLoaded2: false,
-    isFontLoaded3: false,
-    mapRegion: {
-      latitude: 40.748433,
-      longitude: -73.985656,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.3000,
-    },
-    location: { coords:{ latitude: 40.748433, longitude: -73.985656 }
+ class Map extends Component {
+
+  constructor(props){
+    super(props)
+    this.state = {
+      date:'',
+      isPedometerAvailable: 'checking',
+      pastStepCount: 0,
+      currentStepCount: 0,
+      isFontLoaded1: false,
+      isFontLoaded2: false,
+      isFontLoaded3: false,
+      mapRegion: {
+        latitude: 40.748433,
+        longitude: -73.985656,
+        latitudeDelta: 0.0422,
+        longitudeDelta: 0.7000,
       },
-    locationResult: null
-  };
+      location: { coords:{ latitude: 40.748433, longitude: -73.985656 }
+        },
+      locationResult: null
+    };
+}
+
 
 
   componentDidMount(){
+    //call fetchDay() in thunk
+    const dayThunk = fetchDay();
+    store.dispatch(dayThunk);
+    // axios.get('http://192.168.1.4:5000/api/day').then(res=>res.data).then(cool=> this.setState({cool}));
     Font.loadAsync({
       'AvenirNextHeavyCondensed': require('../../public/fonts/AvenirNextHeavyCondensed.ttf')
   }).then(()=>{
@@ -121,6 +132,7 @@ export default class Map extends Component {
 
 
   render() {
+    console.log('+++++',this.props.DAY)
     const { isFontLoaded1, isFontLoaded2, isFontLoaded3 } = this.state;
     return (
 
@@ -140,6 +152,7 @@ export default class Map extends Component {
         <MapView.Marker
           coordinate={this.state.location.coords}
           followsUserLocation = {true}
+          image={require('../../public/marker.png')}
           title='You are here'
           description="bla bla bla"
         />
@@ -155,15 +168,15 @@ export default class Map extends Component {
           </Text>
           <Text>Walk! And watch this go up: {this.state.currentStepCount}</Text> */}
           <View style={{height:'48%',width:'100%',marginTop:'-3%'}}>
-              <View style={{height:'31%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
-                <View style={{height:'100%',width:'58%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:80,color:'#3300FF',textAlign:'right'}]}>{this.state.currentStepCount}</Text></View>
-                <View style={{height:'100%',width:'18%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'50%',textAlign:'center'}]}>Steps</Text></View>
-                <View style={{height:'100%',width:'24%'}}><Image style={{marginTop:'-15%'}} source={require('../../public/walk.jpg')}/></View>
+              <View style={{height:'30%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
+                <View style={{height:'100%',width:'58%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{this.state.currentStepCount}</Text></View>
+                <View style={{height:'100%',width:'18%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'45%',textAlign:'center'}]}>Steps</Text></View>
+                <View style={{height:'100%',width:'24%'}}><Image style={{marginTop:'-16%'}} source={require('../../public/walk.jpg')}/></View>
               </View>
-              <View style={{height:'31%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
-                <View style={{height:'100%',width:'31%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:80,color:'#3300FF',textAlign:'right'}]}>{this.state.currentStepCount/2000}</Text></View>
-                <View style={{height:'100%',width:'19%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'50%',textAlign:'center'}]}>Miles</Text></View>
-                <View style={{height:'100%',width:'50%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:50,color:'#E6E7E8',textAlign:'right',marginTop:'13%'}]}>{this.state.date}</Text></View>
+              <View style={{height:'30%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
+                <View style={{height:'100%',width:'35%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{(this.state.currentStepCount/2000).toFixed(1)}</Text></View>
+                <View style={{height:'100%',width:'19%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'45%',textAlign:'center'}]}>Miles</Text></View>
+                <View style={{height:'100%',width:'46%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:48,color:'#E6E7E8',textAlign:'right',marginTop:'13%'}]}>{this.state.date}</Text></View>
               </View>
               <View style={{height:'26%',width:'95%',marginLeft: 'auto',marginRight: 'auto',marginTop:'7%'}}>
                 <View style={{flexDirection:'row',height:'40%',width:'100%'}}>
@@ -177,6 +190,7 @@ export default class Map extends Component {
                 </View>
               </View>
           </View>
+
             
         
         </View>
@@ -187,12 +201,10 @@ export default class Map extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   gradient: {
-    // flex: 1,
     marginTop: '-15%',
     height: '8%',
     width: '100%', 
@@ -203,11 +215,22 @@ const styles = StyleSheet.create({
     height: '62%',
     width: '100%', 
     alignItems: 'center',
-    // justifyContent: 'center',
     backgroundColor: 'white'
   }
 });
 
+const mapStateToProps = state => {
+  // console.log(store)
+  return {
+   DAY: state.day
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Map);
 
 const generatedMapStyle = [
   {

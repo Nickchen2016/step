@@ -1,4 +1,4 @@
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator } from 'react-navigation'
 import Maping from './Components/Maping';
 import Control from './Components/Control';
 import Onload from './Components/Onload';

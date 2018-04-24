@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-// import { Provider } from 'react-redux';
+import { Provider } from 'react-redux';
 import RootNavigator from  './client/index';
-// import store from './client/store';
+import store from './client/store';
 
 export default class App extends Component {
   render(){
     return (
-      // <Provider store={store}>
+      <Provider store={store}>
         <RootNavigator/>
-      // </Provider>
+      </Provider>
     )
   }
 }
