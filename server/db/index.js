@@ -21,25 +21,11 @@ const Day = db.define('day',{
             validate:{
                 notEmpty: true
             }
-        },
-        miles:{
-            type: Sequelize.STRING,
-            allowNull: false,
-            validate:{
-                notEmpty: true
-            }
         }
     })
 
 const Week = db.define('week',{
         totalSteps:{
-            type: Sequelize.STRING,
-            allowNull: false,
-            validate: {
-                notEmpty: true
-            }
-        },
-        totalMiles:{
             type: Sequelize.STRING,
             allowNull: false,
             validate: {

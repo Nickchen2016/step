@@ -130,9 +130,8 @@ import store, { fetchDay } from '../store';
   };
 
 
-
   render() {
-    console.log('+++++',this.props.DAY)
+    // console.log('+++++',this.props.Day)
     const { isFontLoaded1, isFontLoaded2, isFontLoaded3 } = this.state;
     return (
 
@@ -220,9 +219,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  // console.log(store)
+  console.log(state)
   return {
-   DAY: state.day
+   Day: state.day
   }
 }
 
