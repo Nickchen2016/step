@@ -35,7 +35,7 @@ const Week = db.define('week',{
     });
 
     Day.belongsTo(Week);
-    Week.hasMany(Day);
+    Week.hasMany(Day, {onDelete:'CASCADE', hooks: true});
 
     module.exports = {
         Day,
