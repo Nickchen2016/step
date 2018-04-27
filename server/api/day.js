@@ -21,11 +21,11 @@ apiRouter.post('/', (req,res,next)=>{
     .catch(next)
 })
 
-apiRouter.delete('/:id',(req,res,next)=>{
-    Day.findById(req.params.id)
-    .then(result=>result.destroy())
-    .then(()=> res.sendStatus(204))
-    .catch(next)
-})
+// apiRouter.delete('/:id',(req,res,next)=>{
+//     Day.findById(req.params.id)
+//     .then(result=>result.destroy())
+//     .then(()=> res.sendStatus(204))
+//     .catch(next)
+// })
 
 module.exports = apiRouter;

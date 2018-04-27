@@ -21,9 +21,9 @@ app.get('/', (req, res) => {
 });
 
 // app.use(express.static(path.join(__dirname, '..', 'public')));
- Day.sync({ force: true })
+ Day.sync({ force: false })
   .then(function(){
-    return Week.sync({ force: true });
+    return Week.sync({ force: false });
   })
   .then(function(){
     app.listen(port, () => console.log(`Listening on port ${port}`));

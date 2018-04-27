@@ -36,6 +36,7 @@ import store, { fetchDay } from '../store';
     //call fetchDay() in thunk
     const dayThunk = fetchDay();
     store.dispatch(dayThunk);
+
     // axios.get('http://192.168.1.4:5000/api/day').then(res=>res.data).then(cool=> this.setState({cool}));
     Font.loadAsync({
       'AvenirNextHeavyCondensed': require('../../public/fonts/AvenirNextHeavyCondensed.ttf')
@@ -105,13 +106,19 @@ import store, { fetchDay } from '../store';
       }
     );
 
-    const end = new Date();
+    // const end = new Date();
+    const time = new Date();
     // Get current date next to milemeter
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const date = months[end.getMonth()]+'/'+end.getDate();
+    const date = months[time.getMonth()]+'/'+time.getDate();
     this.setState({date});
+    //set the time as the begining of the day 00:00:00
     const start = new Date();
-    start.setDate(end.getDate() - 1);
+    start.setHours(0,0,0,0);
+    //set the time as the end 23:59:59
+    const end = new Date();
+    end.setHours(23,59,59,999);
+    // start.setDate(end.getDate() - 1);
     Pedometer.getStepCountAsync(start, end).then(
       result => {
         this.setState({ pastStepCount: result.steps });
@@ -168,12 +175,12 @@ import store, { fetchDay } from '../store';
           <Text>Walk! And watch this go up: {this.state.currentStepCount}</Text> */}
           <View style={{height:'48%',width:'100%',marginTop:'-3%'}}>
               <View style={{height:'30%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
-                <View style={{height:'100%',width:'58%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{this.state.currentStepCount}</Text></View>
+                <View style={{height:'100%',width:'58%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{this.state.pastStepCount}</Text></View>
                 <View style={{height:'100%',width:'18%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'45%',textAlign:'center'}]}>Steps</Text></View>
                 <View style={{height:'100%',width:'24%'}}><Image style={{marginTop:'-16%'}} source={require('../../public/walk.jpg')}/></View>
               </View>
               <View style={{height:'30%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
-                <View style={{height:'100%',width:'35%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{(this.state.currentStepCount/2000).toFixed(1)}</Text></View>
+                <View style={{height:'100%',width:'35%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{(this.state.pastStepCount/2000).toFixed(1)}</Text></View>
                 <View style={{height:'100%',width:'19%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'45%',textAlign:'center'}]}>Miles</Text></View>
                 <View style={{height:'100%',width:'46%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:48,color:'#E6E7E8',textAlign:'right',marginTop:'13%'}]}>{this.state.date}</Text></View>
               </View>
@@ -184,7 +191,7 @@ import store, { fetchDay } from '../store';
                 </View>
                 <View style={{height:'1%',width:'100%',backgroundColor:'#E6E7E8'}}></View>
                 <View style={{flexDirection:'row',height:'59%',width:'100%'}}>
-                  <View style={{height:'100%',width:'50%'}}></View>
+                  <View style={{height:'100%',width:'50%'}}><Text></Text></View>
                   <View style={{height:'100%',width:'50%'}}></View>
                 </View>
               </View>

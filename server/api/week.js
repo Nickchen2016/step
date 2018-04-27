@@ -12,6 +12,14 @@ apiRouter.post('/', (req,res,next)=>{
     .catch(next)
 })
 
+apiRouter.get('/',(req,res,next)=>{ 
+    Week.findAll({
+        include:[{ model:Day }]
+    }).then(result=>{
+        res.send(result);
+    }).catch(next)
+})
+
 apiRouter.param('id',(req,res,next,id)=>{
     Week.findById(id)
     .then(week=>{
@@ -35,9 +43,9 @@ apiRouter.put('/:id',(req,res,next)=>{
     .catch(next)
 })
 
-apiRouter.get('/:id',(req,res,next)=>{ 
-        res.send(req.week);
-})
+// apiRouter.get('/:id',(req,res,next)=>{ 
+//         res.send(req.week);
+// })
 
 apiRouter.delete('/:id',(req,res,next)=>{
     req.week.destroy()
