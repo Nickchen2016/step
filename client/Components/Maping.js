@@ -3,7 +3,8 @@ import { StyleSheet, Text, View, StatusBar, Image } from 'react-native';
 import { Constants, MapView, Location,Permissions,LinearGradient,Pedometer,Font  } from 'expo';
 import Control from './Control';
 import { connect } from 'react-redux';
-import store, { fetchDay } from '../store';
+import store, { fetchDay,fetchWeek } from '../store';
+import axios from 'axios'
 
 
  class Map extends Component {
@@ -30,14 +31,37 @@ import store, { fetchDay } from '../store';
     };
 }
 
-
-
   componentDidMount(){
-    //call fetchDay() in thunk
-    const dayThunk = fetchDay();
-    store.dispatch(dayThunk);
 
-    // axios.get('http://192.168.1.4:5000/api/day').then(res=>res.data).then(cool=> this.setState({cool}));
+    // //call fetchDay()&fechWeek() in thunk
+    // const dayThunk = fetchDay();
+    // store.dispatch(dayThunk);
+    // const weekThunk = fetchWeek();
+    // store.dispatch(weekThunk);
+
+    const state = this.state;
+    const props = this.props;
+    const time = new Date();
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const date = months[time.getMonth()]+'/'+time.getDate();
+    this.setState({date});
+
+    time.setHours(23,59,59,999);
+    const milliseconds = time.getTime()-new Date().getTime();
+    const MILLISECONDS_IN_A_DAY = 86400000;
+    const weekColumn = { totalSteps : state.pastStepCount };
+
+    let postAtMidNight = setTimeout(function tick(){
+      if(props.Week.length===0 || new Date().getDay()===0){
+        axios.post('http://192.168.1.3:5000/api/week', weekColumn)
+        .then(res=> res.data).then(result=>console.log('data saved'))
+      }
+      // console.log('-----------------',props.Week.length)
+      postAtMidNight = setTimeout(tick,MILLISECONDS_IN_A_DAY);
+    },milliseconds)
+
+
+    // axios.get('http://192.168.1.4:5000/api/week').then(res=>res.data).then(cool=> this.setState({cool}));
     Font.loadAsync({
       'AvenirNextHeavyCondensed': require('../../public/fonts/AvenirNextHeavyCondensed.ttf')
   }).then(()=>{
@@ -58,8 +82,9 @@ import store, { fetchDay } from '../store';
     this.setState({
         isFontLoaded3: true
     })
-});
+  });
 
+    //call location & pedo function
     this._getLocationAsync();
     this._subscribe();
   }
@@ -93,32 +118,27 @@ import store, { fetchDay } from '../store';
       });
     });
 
-    Pedometer.isAvailableAsync().then(
-      result => {
-        this.setState({
-          isPedometerAvailable: String(result)
-        });
-      },
-      error => {
-        this.setState({
-          isPedometerAvailable: "Could not get isPedometerAvailable: " + error
-        });
-      }
-    );
+    // Pedometer.isAvailableAsync().then(
+    //   result => {
+    //     this.setState({
+    //       isPedometerAvailable: String(result)
+    //     });
+    //   },
+    //   error => {
+    //     this.setState({
+    //       isPedometerAvailable: "Could not get isPedometerAvailable: " + error
+    //     });
+    //   }
+    // );
 
-    // const end = new Date();
-    const time = new Date();
-    // Get current date next to milemeter
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const date = months[time.getMonth()]+'/'+time.getDate();
-    this.setState({date});
-    //set the time as the begining of the day 00:00:00
+
+    //set the time as the begining time
     const start = new Date();
     start.setHours(0,0,0,0);
-    //set the time as the end 23:59:59
+    //set the time as the ending time
     const end = new Date();
     end.setHours(23,59,59,999);
-    // start.setDate(end.getDate() - 1);
+    
     Pedometer.getStepCountAsync(start, end).then(
       result => {
         this.setState({ pastStepCount: result.steps });
@@ -138,7 +158,7 @@ import store, { fetchDay } from '../store';
 
 
   render() {
-    // console.log('+++++',this.props.Day)
+    // console.log('+++++',this.props)
     const { isFontLoaded1, isFontLoaded2, isFontLoaded3 } = this.state;
     return (
 
@@ -166,21 +186,14 @@ import store, { fetchDay } from '../store';
         <LinearGradient colors={['rgba(255,255,255,0)','white','white']} style={styles.gradient}>
         </LinearGradient>
         <View style={styles.control}>
-          {/* <Text>
-            Pedometer.isAvailableAsync(): {this.state.isPedometerAvailable}
-          </Text>
-          <Text>
-            Steps taken in the last 24 hours: {this.state.pastStepCount}
-          </Text>
-          <Text>Walk! And watch this go up: {this.state.currentStepCount}</Text> */}
           <View style={{height:'48%',width:'100%',marginTop:'-3%'}}>
               <View style={{height:'30%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
-                <View style={{height:'100%',width:'58%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{this.state.pastStepCount}</Text></View>
+                <View style={{height:'100%',width:'58%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{this.state.pastStepCount+this.state.currentStepCount}</Text></View>
                 <View style={{height:'100%',width:'18%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'45%',textAlign:'center'}]}>Steps</Text></View>
                 <View style={{height:'100%',width:'24%'}}><Image style={{marginTop:'-16%'}} source={require('../../public/walk.jpg')}/></View>
               </View>
               <View style={{height:'30%',width:'90%',marginLeft: 'auto',marginRight: 'auto',flexDirection:'row'}}>
-                <View style={{height:'100%',width:'35%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{(this.state.pastStepCount/2000).toFixed(1)}</Text></View>
+                <View style={{height:'100%',width:'35%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:70,color:'#3300FF',textAlign:'right'}]}>{((this.state.pastStepCount+this.state.currentStepCount)/2000).toFixed(1)}</Text></View>
                 <View style={{height:'100%',width:'19%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:35,color:'#3300FF',marginTop:'45%',textAlign:'center'}]}>Miles</Text></View>
                 <View style={{height:'100%',width:'46%'}}><Text style={[isFontLoaded1 && {fontFamily:'AvenirNextHeavyCondensed',fontSize:48,color:'#E6E7E8',textAlign:'right',marginTop:'13%'}]}>{this.state.date}</Text></View>
               </View>
@@ -191,7 +204,7 @@ import store, { fetchDay } from '../store';
                 </View>
                 <View style={{height:'1%',width:'100%',backgroundColor:'#E6E7E8'}}></View>
                 <View style={{flexDirection:'row',height:'59%',width:'100%'}}>
-                  <View style={{height:'100%',width:'50%'}}><Text></Text></View>
+                  <View style={{height:'100%',width:'50%'}}></View>
                   <View style={{height:'100%',width:'50%'}}></View>
                 </View>
               </View>
@@ -226,9 +239,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  console.log(state)
   return {
-   Day: state.day
+   Day: state.day,
+  Week: state.week
   }
 }
 
