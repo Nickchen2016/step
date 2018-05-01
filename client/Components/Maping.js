@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, StatusBar, Image } from 'react-native';
 import { Constants, MapView, Location,Permissions,LinearGradient,Pedometer,Font  } from 'expo';
 import Control from './Control';
 import { connect } from 'react-redux';
-import store, { fetchDay,fetchWeek } from '../store';
+import store, { fetchWeek } from '../store';
 import axios from 'axios'
 
 
@@ -43,23 +43,28 @@ import axios from 'axios'
     const props = this.props;
     const time = new Date();
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const week = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const weekName = week[time.getDay()];
     const date = months[time.getMonth()]+'/'+time.getDate();
     this.setState({date});
 
-    time.setHours(23,59,59,999);
+    time.setHours(0,39,59,999);
     const milliseconds = time.getTime()-new Date().getTime();
     const MILLISECONDS_IN_A_DAY = 86400000;
     const weekColumn = { totalSteps : state.pastStepCount };
+    const dayColumn = { weekName, steps: state.pastStepCount };
 
     let postAtMidNight = setTimeout(function tick(){
-      if(props.Week.length===0 || new Date().getDay()===0){
+      if(props.Week.length===6 || new Date().getDay()===0){
         axios.post('http://192.168.1.3:5000/api/week', weekColumn)
-        .then(res=> res.data).then(result=>console.log('data saved'))
+        .then(res=>{
+          axios.post('http://192.168.1.3:5000/api/day', {...dayColumn, weekId: res.data.id})
+        })
+      }else{
+          axios.post('http://192.168.1.3:5000/api/day', {...dayColumn, weekId: (props.Week[props.Week.length-1]).id})
       }
-      // console.log('-----------------',props.Week.length)
       postAtMidNight = setTimeout(tick,MILLISECONDS_IN_A_DAY);
     },milliseconds)
-
 
     // axios.get('http://192.168.1.4:5000/api/week').then(res=>res.data).then(cool=> this.setState({cool}));
     Font.loadAsync({
@@ -158,7 +163,7 @@ import axios from 'axios'
 
 
   render() {
-    // console.log('+++++',this.props)
+    // console.log('+++++',this.props.Week)
     const { isFontLoaded1, isFontLoaded2, isFontLoaded3 } = this.state;
     return (
 
