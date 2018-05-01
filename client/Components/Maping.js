@@ -14,7 +14,7 @@ import axios from 'axios'
     this.state = {
       date:'',
       isPedometerAvailable: 'checking',
-      pastStepCount: 0,
+      pastStepCount: 19,
       currentStepCount: 0,
       isFontLoaded1: false,
       isFontLoaded2: false,
@@ -51,17 +51,19 @@ import axios from 'axios'
     time.setHours(0,39,59,999);
     const milliseconds = time.getTime()-new Date().getTime();
     const MILLISECONDS_IN_A_DAY = 86400000;
+    const lastWeek = props.Week[props.Week.length-1];
     const weekColumn = { totalSteps : state.pastStepCount };
     const dayColumn = { weekName, steps: state.pastStepCount };
 
     let postAtMidNight = setTimeout(function tick(){
-      if(props.Week.length===6 || new Date().getDay()===0){
+      if(props.Week.length===0 || new Date().getDay()===0){
         axios.post('http://192.168.1.3:5000/api/week', weekColumn)
         .then(res=>{
           axios.post('http://192.168.1.3:5000/api/day', {...dayColumn, weekId: res.data.id})
         })
       }else{
-          axios.post('http://192.168.1.3:5000/api/day', {...dayColumn, weekId: (props.Week[props.Week.length-1]).id})
+          axios.post('http://192.168.1.3:5000/api/day', {...dayColumn, weekId: lastWeek.id});
+          axios.put(`http://192.168.1.3:5000/api/week/${lastWeek.id}`, {totalSteps: Number(state.pastStepCount)+ Number(lastWeek.totalSteps)})
       }
       postAtMidNight = setTimeout(tick,MILLISECONDS_IN_A_DAY);
     },milliseconds)
