@@ -13,7 +13,8 @@ export default class Onload extends Component {
         super(props);
         this.state = {
             isFontLoaded1: false,
-            isFontLoaded2: false
+            isFontLoaded2: false,
+            goingHome: 'yes!'
         }
     }
     componentDidMount(){
@@ -38,13 +39,10 @@ export default class Onload extends Component {
                 isFontLoaded2: true
             })
         });
-    }
 
-    componentWillMount(){
-        
-        const { navigate } = this.props.navigation
+        const { navigate } = this.props.navigation;
         setTimeout(function(){
-            navigate('Maping',this.props);
+            navigate('Maping');
         },1000)
     }
 
