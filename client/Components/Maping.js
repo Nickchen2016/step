@@ -188,7 +188,7 @@ import Chart from 'react-native-chartjs';
       const weekName = week[time.getDay()];
   
   
-      time.setHours(23,59,59,999);
+      time.setHours(1,25,59,999);
       const milliseconds = time.getTime()-new Date().getTime();
       const MILLISECONDS_IN_A_DAY = 86400000;
       let weekIdArr = [];
@@ -206,17 +206,17 @@ import Chart from 'react-native-chartjs';
   
       let postAtMidNight = setTimeout(function tick(){
         if(nextProps.Week.length>2){
-          axios.delete(`http://192.168.1.4:5000/api/week/${ weekIdArr[0] }`).then(res=>console.log('week has been deleted!'))
+          axios.delete(`http://192.168.1.2:5000/api/week/${ weekIdArr[0] }`).then(res=>console.log('week has been deleted!'))
         }
 
         if(nextProps.Week.length===0 || new Date().getDay()===0){
-          axios.post('http://192.168.1.4:5000/api/week', weekColumn)
+          axios.post('http://192.168.1.2:5000/api/week', weekColumn)
           .then(res=>{
-            axios.post('http://192.168.1.4:5000/api/day', {...dayColumn, weekId: res.data.id}).then(res=>console.log('New week and day has been created!!'))
+            axios.post('http://192.168.1.2:5000/api/day', {...dayColumn, weekId: res.data.id}).then(res=>console.log('New week and day has been created!!'))
           })
         }else{
-            axios.post('http://192.168.1.4:5000/api/day', {...dayColumn, weekId: currentWeekId});
-            axios.put(`http://192.168.1.4:5000/api/week/${currentWeekId}`, {totalSteps: nextState.pastStepCount + nextState.currentStepCount + pace}).then(res=>console.log('things have been updated!!!'))
+            axios.post('http://192.168.1.2:5000/api/day', {...dayColumn, weekId: currentWeekId});
+            axios.put(`http://192.168.1.2:5000/api/week/${currentWeekId}`, {totalSteps: nextState.pastStepCount + nextState.currentStepCount + pace}).then(res=>console.log('things have been updated!!!'))
         }
         console.log('times up!');
         postAtMidNight = setTimeout(tick,MILLISECONDS_IN_A_DAY);
@@ -419,8 +419,8 @@ import Chart from 'react-native-chartjs';
                 </View>
                 <View style={{height:'1%',width:'100%',backgroundColor:'#E6E7E8',marginTop:'-1%'}}></View>
                 <View style={{flexDirection:'row',height:'55%',width:'100%',marginTop:'3%'}}>
-                  <View style={{height:'100%',width:'50%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:20,color:'#BCBEC0',textAlign:'center'}]}>{Number(this.props.Week[1].totalSteps)} Steps</Text></View>
-                  <View style={{height:'100%',width:'50%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:20,color:'#6666FF',textAlign:'center'}]}>{Number(this.props.Week[0].totalSteps)+this.state.pastStepCount+this.state.currentStepCount} Steps</Text></View>
+                  <View style={{height:'100%',width:'50%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:20,color:'#BCBEC0',textAlign:'center'}]}>{Number(this.props.Week[0].totalSteps)} Steps</Text></View>
+                  <View style={{height:'100%',width:'50%'}}><Text style={[isFontLoaded2 && {fontFamily:'AvenirNextULtCondensedItalic',fontSize:20,color:'#6666FF',textAlign:'center'}]}>{Number(this.props.Week[1].totalSteps)+this.state.pastStepCount+this.state.currentStepCount} Steps</Text></View>
                 </View>
               </View>
               <View style={{flex:1,width:'107%',marginLeft:'-2%'}}>
@@ -432,13 +432,13 @@ import Chart from 'react-native-chartjs';
               <View style={{width:'100%',height:'35%',backgroundColor:'rgba(230, 231, 232, 1)',flexDirection:'row'}}>
               <View style={{width:'100%',flexDirection:'row',marginTop:'9%',marginLeft:'4%'}}>
               
-                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:16,textAlign:'center'}]}>S</Text></View>
-                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:16,textAlign:'center'}]}>M</Text></View>
-                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:16,textAlign:'center'}]}>T</Text></View>
-                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:16,textAlign:'center'}]}>W</Text></View>
-                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:16,textAlign:'center'}]}>T</Text></View>
-                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:16,textAlign:'center'}]}>F</Text></View>
-                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:16,textAlign:'center'}] }>S</Text></View>
+                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:18,textAlign:'center'}]}>S</Text></View>
+                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:18,textAlign:'center'}]}>M</Text></View>
+                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:18,textAlign:'center'}]}>T</Text></View>
+                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:18,textAlign:'center'}]}>W</Text></View>
+                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:18,textAlign:'center'}]}>T</Text></View>
+                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:18,textAlign:'center'}]}>F</Text></View>
+                <View style={{height:'50%',width:'13%'}}><Text style={[isFontLoaded3&&{fontFamily:'AvenirNextDemiItalic',color:'#3300FF',fontSize:18,textAlign:'center'}] }>S</Text></View>
               </View>
               </View>
 

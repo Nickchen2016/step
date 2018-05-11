@@ -36,7 +36,7 @@ export function getDay (day) {
 
 export const fetchDay = ()=>
     dispatch =>
-        axios.get('http://192.168.1.4:5000/api/day')
+        axios.get('http://192.168.1.2:5000/api/day')
         .then(res => 
             dispatch(getDay(res.data||initialState)))
         .catch(err => console.log(err))

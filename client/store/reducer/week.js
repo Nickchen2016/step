@@ -19,7 +19,7 @@ export function getWeek (week) {
 
 export const fetchWeek = ()=>
     dispatch =>
-        axios.get('http://192.168.1.4:5000/api/week')
+        axios.get('http://192.168.1.2:5000/api/week')
         .then(res => 
             dispatch(getWeek(res.data||initialState)))
         .catch(err => console.log(err))
