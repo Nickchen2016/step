@@ -77,174 +77,31 @@ import Chart from 'react-native-chartjs';
   });
 
 
-// //chart.js set up    
-//     let weekIdArr = [];
-//     let weeklyData = [0,0,0,0,0,0,0,0,0];
-    
-//     let weekIds = this.props.Week.forEach((week)=>{weekIdArr.push(week.id)});
-//     weekIdArr.sort();
-//     let currentWeekId = weekIdArr[1];
-//     let currentWeek = this.props.Week.map((week)=>{
-//       if(week.id===currentWeekId){
-//         return week;
-//       }
-//     })
-//     console.log('_______',this.props.Week)
-//     // let weeklyData = [0,0,0,0,0,0,0,0,0];
-//     const c = currentWeek[1].days.forEach((day)=>{
-//       weeklyData[week.indexOf(day.weekName)+1]=day.steps;
-//     });
-//     // console.log('--------------',weeklyData, time.getDay()+1, props)
-
-//     const chartConfiguration = {
-//       type: 'line',
-//       data: {
-//         labels: ["","", "", "", "", "", "", "",""],
-//         datasets: [{
-//           label: 'label',
-//           lineTension: 0.1,
-//           data: weeklyData,
-//           backgroundColor: [
-//             'rgba(230, 231, 232, 1)'
-//           ],
-//           borderColor: [
-//             'rgba(102,102,255,1)'
-//           ],
-//           borderWidth: 10,
-//           pointBackgroundColor: 'rgba(230, 231, 232, 1)',
-//           pointRadius: 1
-//         }]
-//       },
-//       options: {
-//         maintainAspectRatio : false,
-//         legend: {
-//           display: false
-//         },
-//         tooltips: {
-//           callbacks: {
-//             label: function(tooltipItem) {
-//             // console.log(tooltipItem)
-//               return tooltipItem.yLabel;
-//             }
-//           }
-//         },
-//         scales: {
-//           xAxes: [{ 
-//             gridLines:{ display: false },
-//             ticks: {
-//               beginAtZero: true,
-//               display: false
-//             }
-//           }],
-//           yAxes: [{
-//             gridLines:{ display: false },
-//             type: 'linear',
-//             ticks: {
-//               // max: Math.max.apply(this, weeklyData),
-//             //   callback: function(value, index, values) {
-//             //     if (index === values.length - 1) return Math.min.apply(this, weeklyData);
-//             //     else if (index === 0) return Math.max.apply(this, weeklyData);
-//             //     else return '';
-//             //  },
-//               beginAtZero: true,
-//               display: false
-//             }
-//           }]
-//         }
-//       }
-//     }; 
-//     this.setState({ chartConfiguration: chartConfiguration })
-  }
-
-  componentWillUnmount(){
-    this._unsubscribe();
-  }
-
-  shouldComponentUpdate(nextProps,nextState){
-    if(this.state.pastStepCount!==nextState.pastStepCount){
-      return true;
-    }
-    if(this.state.date!==nextState.date){
-      return true;
-    }
-    if(this.state.currentStepCount!==nextState.currentStepCount){
-      return true;
-    }
-    if(this.state.location!==nextState.location){
-      return true;
-    }
-    // if(this.state.chartConfiguration.data.datasets[0].data.join('')!==nextState.chartConfiguration.data.datasets[0].data.join('')){
-    //   return true;
-    // }
-    
-    return false;
-  }
-
-  componentWillUpdate(nextProps,nextState){
-    if(nextState.pastStepCount!=this.state.pastStepCount){
-
-      const time = new Date();
-      const week = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const weekName = week[time.getDay()];
-  
-  
-      time.setHours(1,25,59,999);
-      const milliseconds = time.getTime()-new Date().getTime();
-      const MILLISECONDS_IN_A_DAY = 86400000;
-      let weekIdArr = [];
-      let weekIds = nextProps.Week.forEach((week)=>{weekIdArr.push(week.id)});
-      weekIdArr.sort();
-      let currentWeekId = weekIdArr[1];
-  
-      // console.log('.................',currentWeek);
-      const weekColumn = { totalSteps : nextState.pastStepCount };
-      const dayColumn = { weekName, steps: nextState.pastStepCount };
-      let pace = 0;
-      let currentWeek = nextProps.Week.filter((val)=>{return val.id===currentWeekId});
-      currentWeek[0].days.forEach((day)=>{pace+=Number(day.steps)});
-      console.log('---------------',currentWeekId)
-  
-      let postAtMidNight = setTimeout(function tick(){
-        if(nextProps.Week.length>2){
-          axios.delete(`http://192.168.1.2:5000/api/week/${ weekIdArr[0] }`).then(res=>console.log('week has been deleted!'))
-        }
-
-        if(nextProps.Week.length===0 || new Date().getDay()===0){
-          axios.post('http://192.168.1.2:5000/api/week', weekColumn)
-          .then(res=>{
-            axios.post('http://192.168.1.2:5000/api/day', {...dayColumn, weekId: res.data.id}).then(res=>console.log('New week and day has been created!!'))
-          })
-        }else{
-            axios.post('http://192.168.1.2:5000/api/day', {...dayColumn, weekId: currentWeekId});
-            axios.put(`http://192.168.1.2:5000/api/week/${currentWeekId}`, {totalSteps: nextState.pastStepCount + nextState.currentStepCount + pace}).then(res=>console.log('things have been updated!!!'))
-        }
-        console.log('times up!');
-        postAtMidNight = setTimeout(tick,MILLISECONDS_IN_A_DAY);
-      },milliseconds)
-
-    }
-
-
-    //chart.js set up 
-    const week = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];   
+//chart.js set up    
     let weekIdArr = [];
     let weeklyData = [0,0,0,0,0,0,0,0,0];
+    let currentWeekId;
     
     let weekIds = this.props.Week.forEach((week)=>{weekIdArr.push(week.id)});
-    weekIdArr.sort();
-    let currentWeekId = weekIdArr[1];
-    let currentWeek = this.props.Week.map((week)=>{
+    if(weekIdArr.length===1){
+      currentWeekId = weekIdArr[0];
+    }else{
+      weekIdArr.sort((a,b)=>{ return a-b });
+      currentWeekId = weekIdArr[1];
+    }
+
+    let currentWeek = this.props.Week.find((week)=>{
       if(week.id===currentWeekId){
         return week;
       }
     })
-    // console.log('_______',this.props.Week)
-    let stepUpdateId = new Date().getDay();
-    const c = currentWeek[1].days.forEach((day)=>{
+
+    console.log('_______',this.props.Week,'+++++++++++++',currentWeek)
+
+    const c = currentWeek.days.forEach((day)=>{
       weeklyData[week.indexOf(day.weekName)+1]=day.steps;
     });
-    weeklyData[stepUpdateId+1]=(this.state.pastStepCount+this.state.currentStepCount).toString();
-    console.log('_______',weeklyData)
+    // console.log('--------------',weeklyData, time.getDay()+1, props)
 
     const chartConfiguration = {
       type: 'line',
@@ -304,6 +161,156 @@ import Chart from 'react-native-chartjs';
       }
     }; 
     this.setState({ chartConfiguration: chartConfiguration })
+  }
+
+  componentWillUnmount(){
+    this._unsubscribe();
+  }
+
+  shouldComponentUpdate(nextProps,nextState){
+    if(this.state.pastStepCount!==nextState.pastStepCount){
+      return true;
+    }
+    if(this.state.date!==nextState.date){
+      return true;
+    }
+    if(this.state.currentStepCount!==nextState.currentStepCount){
+      return true;
+    }
+    if(this.state.location!==nextState.location){
+      return true;
+    }
+    // if(this.state.chartConfiguration.data.datasets[0].data.join('')!==nextState.chartConfiguration.data.datasets[0].data.join('')){
+    //   return true;
+    // }
+    
+    return false;
+  }
+
+  componentWillUpdate(nextProps,nextState){
+    if(nextState.pastStepCount!=this.state.pastStepCount){
+
+      const time = new Date();
+      const week = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const weekName = week[time.getDay()];
+  
+  
+      time.setHours(23,59,59,999);
+      const milliseconds = time.getTime()-new Date().getTime();
+      const MILLISECONDS_IN_A_DAY = 86400000;
+      let weekIdArr = [];
+      let weekIds = nextProps.Week.forEach((week)=>{weekIdArr.push(week.id)});
+      weekIdArr.sort((a,b)=>{ return a-b });
+      let currentWeekId = weekIdArr[1];
+  
+      // console.log('.................',weekIdArr);
+      const weekColumn = { totalSteps : nextState.pastStepCount };
+      const dayColumn = { weekName, steps: nextState.pastStepCount };
+      let pace = 0;
+      let currentWeek = nextProps.Week.filter((val)=>{return val.id===currentWeekId});
+      currentWeek[0].days.forEach((day)=>{pace+=Number(day.steps)});
+      console.log('---------------',weekIdArr)
+  
+      let postAtMidNight = setTimeout(function tick(){
+        if(nextProps.Week.length>2){
+          axios.delete(`http://192.168.1.2:5000/api/week/${ weekIdArr[0] }`).then(res=>console.log('1st week has been deleted!'))
+        }
+
+        if(nextProps.Week.length===0 || new Date().getDay()===0){
+          axios.post('http://192.168.1.2:5000/api/week', weekColumn)
+          .then(res=>{
+            axios.post('http://192.168.1.2:5000/api/day', {...dayColumn, weekId: res.data.id}).then(res=>console.log('New week and day has been created!!'))
+          })
+        }else{
+            axios.post('http://192.168.1.2:5000/api/day', {...dayColumn, weekId: currentWeekId});
+            axios.put(`http://192.168.1.2:5000/api/week/${currentWeekId}`, {totalSteps: nextState.pastStepCount + nextState.currentStepCount + pace}).then(res=>console.log('things have been updated!!!'))
+        }
+        console.log('times up!');
+        postAtMidNight = setTimeout(tick,MILLISECONDS_IN_A_DAY);
+      },milliseconds)
+    }
+    
+
+
+    //chart.js set up 
+    // const week = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];   
+    // let weekIdArr = [];
+    // let weeklyData = [0,0,0,0,0,0,0,0,0];
+    
+    // let weekIds = this.props.Week.forEach((week)=>{weekIdArr.push(week.id)});
+    // weekIdArr.sort();
+    // let currentWeekId = weekIdArr[1];
+    // let currentWeek = this.props.Week.map((week)=>{
+    //   if(week.id===currentWeekId){
+    //     return week;
+    //   }
+    // })
+    // // console.log('_______',this.props.Week)
+    // let stepUpdateId = new Date().getDay();
+    // const c = currentWeek[0].days.forEach((day)=>{
+    //   weeklyData[week.indexOf(day.weekName)+1]=day.steps;
+    // });
+    // weeklyData[stepUpdateId+1]=(this.state.pastStepCount+this.state.currentStepCount).toString();
+    // // console.log('_______',weeklyData)
+
+    // const chartConfiguration = {
+    //   type: 'line',
+    //   data: {
+    //     labels: ["","", "", "", "", "", "", "",""],
+    //     datasets: [{
+    //       label: 'label',
+    //       lineTension: 0.1,
+    //       data: weeklyData,
+    //       backgroundColor: [
+    //         'rgba(230, 231, 232, 1)'
+    //       ],
+    //       borderColor: [
+    //         'rgba(102,102,255,1)'
+    //       ],
+    //       borderWidth: 10,
+    //       pointBackgroundColor: 'rgba(230, 231, 232, 1)',
+    //       pointRadius: 1
+    //     }]
+    //   },
+    //   options: {
+    //     maintainAspectRatio : false,
+    //     legend: {
+    //       display: false
+    //     },
+    //     tooltips: {
+    //       callbacks: {
+    //         label: function(tooltipItem) {
+    //         // console.log(tooltipItem)
+    //           return tooltipItem.yLabel;
+    //         }
+    //       }
+    //     },
+    //     scales: {
+    //       xAxes: [{ 
+    //         gridLines:{ display: false },
+    //         ticks: {
+    //           beginAtZero: true,
+    //           display: false
+    //         }
+    //       }],
+    //       yAxes: [{
+    //         gridLines:{ display: false },
+    //         type: 'linear',
+    //         ticks: {
+    //           // max: Math.max.apply(this, weeklyData),
+    //         //   callback: function(value, index, values) {
+    //         //     if (index === values.length - 1) return Math.min.apply(this, weeklyData);
+    //         //     else if (index === 0) return Math.max.apply(this, weeklyData);
+    //         //     else return '';
+    //         //  },
+    //           beginAtZero: true,
+    //           display: false
+    //         }
+    //       }]
+    //     }
+    //   }
+    // }; 
+    // this.setState({ chartConfiguration: chartConfiguration })
 
   }
 
