@@ -3,4 +3,4 @@ This project was bootstrapped with [Create React Native App](https://github.com/
 
 ## Steps Screen Shoot
 
-<img src='public/1111.jpg' width='70%'/>
+<img src='public/1111.jpg' width='80%'/>
